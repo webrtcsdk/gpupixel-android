@@ -21,6 +21,15 @@ public class GPUPixelSourceRawInput extends GPUPixelSource {
         });
     }
 
+    public void addTargetFilter(final long targetId) {
+        GPUPixel.getInstance().runOnDraw(new Runnable() {
+            @Override
+            public void run() {
+                GPUPixel.nativeSourceAddFilter(targetId);
+            }
+        });
+    }
+
     public void SetRotation(int rotation)
     {
         GPUPixel.nativeSourceRawInputSetRotation(mNativeClassID, rotation);

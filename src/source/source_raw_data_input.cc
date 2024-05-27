@@ -126,7 +126,7 @@ void SourceRawDataInput::uploadBytes(const uint8_t* pixels,
     if(_face_detector) {
       _face_detector->Detect(pixels, width, height, GPUPIXEL_MODE_FMT_VIDEO,GPUPIXEL_FRAME_TYPE_RGBA8888);
     }
-    genTextureWithRGBA(pixels, width, height, stride, ts); 
+    genTextureWithRGBA(pixels, width, height, stride, ts);
   });
 }
 

@@ -12,6 +12,7 @@ import android.graphics.Bitmap;
 import android.opengl.GLSurfaceView;
 import android.graphics.PixelFormat;
 import android.os.Build;
+import android.util.Log;
 
 import java.io.File;
 import java.io.FileOutputStream;
@@ -232,7 +233,9 @@ public class GPUPixel {
     public static native void nativeSourceRawInputSetRotation(final long classID, final int rotation);
 
     // Source
+    public static native long nativeSourceAddFilter(final long targetClassId);
     public static native long nativeSourceAddTarget(final long classID, final long targetClassID, final int texID, final boolean isFilter);
+    public static native long nativeSourceAddTargetOutputCallback(final long classId);
     public static native void nativeSourceRemoveTarget(final long classID, final long targetClassID, final boolean isFilter);
     public static native void nativeSourceRemoveAllTargets(final long classID);
     public static native boolean nativeSourceProceed(final long classID, final boolean bUpdateTargets);

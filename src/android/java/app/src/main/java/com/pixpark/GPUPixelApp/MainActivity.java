@@ -29,15 +29,15 @@ public class MainActivity extends AppCompatActivity implements SurfaceHolder.Cal
     private static final String TAG = "GPUPixelDemo";
 
     private GPUPixelSourceCamera sourceCamera;
-    private GPUPixelView surfaceView;
+//    private GPUPixelView surfaceView;
     private BeautyFaceFilter beautyFaceFilter;
     private FaceReshapeFilter faceReshapFilter;
     private LipstickFilter lipstickFilter;
-    private SeekBar smooth_seekbar;
-    private SeekBar whiteness_seekbar;
-    private SeekBar face_reshap_seekbar;
-    private SeekBar big_eye_seekbar;
-    private SeekBar lipstick_seekbar;
+//    private SeekBar smooth_seekbar;
+//    private SeekBar whiteness_seekbar;
+//    private SeekBar face_reshap_seekbar;
+//    private SeekBar big_eye_seekbar;
+//    private SeekBar lipstick_seekbar;
 
     private ActivityMainBinding binding;
 
@@ -45,8 +45,8 @@ public class MainActivity extends AppCompatActivity implements SurfaceHolder.Cal
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        binding = ActivityMainBinding.inflate(getLayoutInflater());
-        setContentView(binding.getRoot());
+//        binding = ActivityMainBinding.inflate(getLayoutInflater());
+//        setContentView(binding.getRoot());
 
         // get log path
         String path = getExternalFilesDir("gpupixel").getAbsolutePath();
@@ -57,99 +57,99 @@ public class MainActivity extends AppCompatActivity implements SurfaceHolder.Cal
         getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
 
         // preview
-        surfaceView = binding.surfaceView;
-        surfaceView.setMirror(true);
+//        surfaceView = binding.surfaceView;
+//        surfaceView.setMirror(true);
 
-        smooth_seekbar = binding.smoothSeekbar;
-        smooth_seekbar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
-            @Override
-            public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
-                beautyFaceFilter.setSmoothLevel(progress / 10.0f);
-            }
-
-            @Override
-            public void onStartTrackingTouch(SeekBar seekBar) {
-
-            }
-
-            @Override
-            public void onStopTrackingTouch(SeekBar seekBar) {
-
-            }
-        });
-
-        whiteness_seekbar = binding.whitenessSeekbar;
-        whiteness_seekbar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
-            @Override
-            public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
-                beautyFaceFilter.setWhiteLevel(progress / 10.0f);
-            }
-
-            @Override
-            public void onStartTrackingTouch(SeekBar seekBar) {
-
-            }
-
-            @Override
-            public void onStopTrackingTouch(SeekBar seekBar) {
-
-            }
-        });
-
-
-        face_reshap_seekbar = binding.thinfaceSeekbar;
-        face_reshap_seekbar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
-            @Override
-            public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
-                faceReshapFilter.setThinLevel(progress / 200.0f);
-            }
-
-            @Override
-            public void onStartTrackingTouch(SeekBar seekBar) {
-
-            }
-
-            @Override
-            public void onStopTrackingTouch(SeekBar seekBar) {
-
-            }
-        });
-
-        big_eye_seekbar = binding.bigeyeSeekbar;
-        big_eye_seekbar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
-            @Override
-            public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
-                faceReshapFilter.setBigeyeLevel(progress / 100.0f);
-            }
-
-            @Override
-            public void onStartTrackingTouch(SeekBar seekBar) {
-
-            }
-
-            @Override
-            public void onStopTrackingTouch(SeekBar seekBar) {
-
-            }
-        });
-
-        lipstick_seekbar = binding.lipstickSeekbar;
-        lipstick_seekbar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
-            @Override
-            public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
-                lipstickFilter.setBlendLevel(progress / 10.0f);
-            }
-
-            @Override
-            public void onStartTrackingTouch(SeekBar seekBar) {
-
-            }
-
-            @Override
-            public void onStopTrackingTouch(SeekBar seekBar) {
-
-            }
-        });
+//        smooth_seekbar = binding.smoothSeekbar;
+//        smooth_seekbar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
+//            @Override
+//            public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
+//                beautyFaceFilter.setSmoothLevel(progress / 10.0f);
+//            }
+//
+//            @Override
+//            public void onStartTrackingTouch(SeekBar seekBar) {
+//
+//            }
+//
+//            @Override
+//            public void onStopTrackingTouch(SeekBar seekBar) {
+//
+//            }
+//        });
+//
+////        whiteness_seekbar = binding.whitenessSeekbar;
+//        whiteness_seekbar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
+//            @Override
+//            public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
+//                beautyFaceFilter.setWhiteLevel(progress / 10.0f);
+//            }
+//
+//            @Override
+//            public void onStartTrackingTouch(SeekBar seekBar) {
+//
+//            }
+//
+//            @Override
+//            public void onStopTrackingTouch(SeekBar seekBar) {
+//
+//            }
+//        });
+//
+//
+////        face_reshap_seekbar = binding.thinfaceSeekbar;
+//        face_reshap_seekbar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
+//            @Override
+//            public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
+//                faceReshapFilter.setThinLevel(progress / 200.0f);
+//            }
+//
+//            @Override
+//            public void onStartTrackingTouch(SeekBar seekBar) {
+//
+//            }
+//
+//            @Override
+//            public void onStopTrackingTouch(SeekBar seekBar) {
+//
+//            }
+//        });
+//
+////        big_eye_seekbar = binding.bigeyeSeekbar;
+//        big_eye_seekbar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
+//            @Override
+//            public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
+//                faceReshapFilter.setBigeyeLevel(progress / 100.0f);
+//            }
+//
+//            @Override
+//            public void onStartTrackingTouch(SeekBar seekBar) {
+//
+//            }
+//
+//            @Override
+//            public void onStopTrackingTouch(SeekBar seekBar) {
+//
+//            }
+//        });
+//
+////        lipstick_seekbar = binding.lipstickSeekbar;
+//        lipstick_seekbar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
+//            @Override
+//            public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
+//                lipstickFilter.setBlendLevel(progress / 10.0f);
+//            }
+//
+//            @Override
+//            public void onStartTrackingTouch(SeekBar seekBar) {
+//
+//            }
+//
+//            @Override
+//            public void onStopTrackingTouch(SeekBar seekBar) {
+//
+//            }
+//        });
 
         //
         this.checkCameraPermission();
@@ -168,7 +168,7 @@ public class MainActivity extends AppCompatActivity implements SurfaceHolder.Cal
         sourceCamera.addTarget(lipstickFilter);
         lipstickFilter.addTarget(faceReshapFilter);
         faceReshapFilter.addTarget(beautyFaceFilter);
-        beautyFaceFilter.addTarget(surfaceView);
+        beautyFaceFilter.addTargetCallback();
 
         sourceCamera.setLandmarkCallbck(new GPUPixel.GPUPixelLandmarkCallback() {
             @Override
@@ -178,8 +178,8 @@ public class MainActivity extends AppCompatActivity implements SurfaceHolder.Cal
             }
         });
         // set default value
-        beautyFaceFilter.setSmoothLevel(0.5f);
-        beautyFaceFilter.setWhiteLevel(0.4f);
+//        beautyFaceFilter.setSmoothLevel(0.5f);
+//        beautyFaceFilter.setWhiteLevel(0.4f);
     }
 
     public void checkCameraPermission() {
