@@ -45,8 +45,8 @@ public class MainActivity extends AppCompatActivity implements SurfaceHolder.Cal
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-//        binding = ActivityMainBinding.inflate(getLayoutInflater());
-//        setContentView(binding.getRoot());
+        binding = ActivityMainBinding.inflate(getLayoutInflater());
+        setContentView(binding.getRoot());
 
         // get log path
         String path = getExternalFilesDir("gpupixel").getAbsolutePath();
@@ -173,8 +173,8 @@ public class MainActivity extends AppCompatActivity implements SurfaceHolder.Cal
         sourceCamera.setLandmarkCallbck(new GPUPixel.GPUPixelLandmarkCallback() {
             @Override
             public void onFaceLandmark(float[] landmarks) {
-                faceReshapFilter.setFaceLandmark(landmarks);
-                lipstickFilter.setFaceLandmark(landmarks);
+//                faceReshapFilter.setFaceLandmark(landmarks);
+//                lipstickFilter.setFaceLandmark(landmarks);
             }
         });
         // set default value

@@ -259,4 +259,5 @@ public class GPUPixel {
 
     public static native void nativeSetLandmarkCallback(Object source, final long classID);
 
+    public static native void nativeSetLandmarkCallbackRawInput(Object source, final long classID);
 }

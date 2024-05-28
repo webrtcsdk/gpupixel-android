@@ -17,7 +17,8 @@
 
 USING_NS_GPUPIXEL
 std::list<std::shared_ptr<Filter>>  filter_list_;
-std::shared_ptr<SourceRawDataInput> source_raw_data_;
+bool is_processing = false;
+//std::shared_ptr<SourceRawDataInput> source_raw_data_;
 
 extern "C" jlong Java_com_pixpark_gpupixel_GPUPixel_nativeSourceImageNew(
     JNIEnv* env,
@@ -94,9 +95,12 @@ extern "C" void Java_com_pixpark_gpupixel_GPUPixel_nativeSourceCameraSetFrame(
 extern "C" jlong Java_com_pixpark_gpupixel_GPUPixel_nativeSourceRawInputNew(
     JNIEnv* env,
     jclass) {
-    __android_log_print(ANDROID_LOG_INFO, "OpenGL", "Init roi 0");
-    source_raw_data_ = SourceRawDataInput::create();
-  return 0;
+    auto ft = SourceRawDataInput::create();
+
+    filter_list_.push_back(ft);
+    jlong ret = (jlong)ft.get();
+
+    return ret;
 };
 
 extern "C" void
@@ -108,13 +112,11 @@ Java_com_pixpark_gpupixel_GPUPixel_nativeSourceRawInputUploadBytes(
     jint width,
     jint height,
     jint stride) {
-    if (source_raw_data_ == nullptr) {
-        __android_log_print(ANDROID_LOG_INFO, "OpenGL", "NULL WTF!!");
-//        source_raw_data_ = SourceRawDataInput::create();
-        return;
-    }
+    if (is_processing) return;
+    is_processing = true;
+
   jint* pixel = env->GetIntArrayElements(jPixel, 0);
-  source_raw_data_->uploadBytes((uint8_t*)pixel, width, height, stride, 0);
+  ((SourceRawDataInput*)classId)->uploadBytes((uint8_t*)pixel, width, height, stride, 0);
   env->ReleaseIntArrayElements(jPixel, pixel, 0);
 };
 
@@ -124,18 +126,15 @@ Java_com_pixpark_gpupixel_GPUPixel_nativeSourceRawInputSetRotation(
     jclass,
     jlong classId,
     jint rotation) {
-  ((SourceRawDataInput*)classId)->setRotation((RotationMode)rotation);
+    ((SourceRawDataInput*)classId)->setRotation((RotationMode)rotation);
 };
 
 extern "C" jlong Java_com_pixpark_gpupixel_GPUPixel_nativeSourceAddFilter(
         JNIEnv* env,
         jclass,
         jlong targetClassId) {
-    __android_log_print(ANDROID_LOG_INFO, "OpenGL", "Init roi 1");
     std::shared_ptr<Target> target = std::shared_ptr<Target>((Filter*)targetClassId);
-    source_raw_data_ = SourceRawDataInput::create();
-    source_raw_data_->addTarget(target);
-    return 0;
+    return (uintptr_t)(((SourceRawDataInput*)targetClassId)->addTarget(target)).get();
 }
 
 extern "C" jlong Java_com_pixpark_gpupixel_GPUPixel_nativeSourceAddTarget(
@@ -191,6 +190,8 @@ extern "C" jlong Java_com_pixpark_gpupixel_GPUPixel_nativeSourceAddTargetOutputC
             int b = data[i * 4 + 2];  // Blue
             __android_log_print(ANDROID_LOG_INFO, "OpenGL", "value: %d %d %d %d", a, r, g, b);
         }
+
+        is_processing = false;
     });
     target = output;
 
@@ -428,7 +429,6 @@ extern "C" void Java_com_pixpark_gpupixel_GPUPixel_nativeSetLandmarkCallback (
         jclass obj,
         jobject source,
         jlong classId) {
-
     jobject globalSourceRef = env->NewGlobalRef(source);
   ((SourceCamera*)classId)->RegLandmarkCallback([=](std::vector<float> landmarks) {
       jclass cls = env->GetObjectClass(globalSourceRef);
@@ -440,8 +440,29 @@ extern "C" void Java_com_pixpark_gpupixel_GPUPixel_nativeSetLandmarkCallback (
       env->CallVoidMethod(globalSourceRef, methodID, arr);
 
       env->DeleteLocalRef(arr);
-
   });
+
+};
+
+extern "C" void Java_com_pixpark_gpupixel_GPUPixel_nativeSetLandmarkCallbackRawInput (
+        JNIEnv* env,
+        jclass obj,
+        jobject source,
+        jlong classId) {
+    jobject globalSourceRef = env->NewGlobalRef(source);
+    ((SourceRawDataInput*)classId)->RegLandmarkCallback([=](std::vector<float> landmarks) {
+        __android_log_print(ANDROID_LOG_INFO, "OpenGL", "landmarks: %zu", landmarks.size());
+        jclass cls = env->GetObjectClass(globalSourceRef);
+        jmethodID methodID = env->GetMethodID(cls, "onFaceLandmark", "([F)V");
+
+        jfloatArray arr = env->NewFloatArray(landmarks.size());
+        env->SetFloatArrayRegion( arr, 0, landmarks.size(), landmarks.data());
+
+        env->CallVoidMethod(globalSourceRef, methodID, arr);
+
+        env->DeleteLocalRef(arr);
+
+    });
 
 };
 
