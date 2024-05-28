@@ -13,7 +13,6 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.SurfaceHolder;
 import android.view.WindowManager;
-import android.widget.SeekBar;
 import android.widget.Toast;
 
 import com.pixpark.GPUPixelApp.databinding.ActivityMainBinding;
@@ -168,7 +167,7 @@ public class MainActivity extends AppCompatActivity implements SurfaceHolder.Cal
         sourceCamera.addTarget(lipstickFilter);
         lipstickFilter.addTarget(faceReshapFilter);
         faceReshapFilter.addTarget(beautyFaceFilter);
-        beautyFaceFilter.addTargetCallback();
+//        beautyFaceFilter.addTargetCallback();
 
         sourceCamera.setLandmarkCallbck(new GPUPixel.GPUPixelLandmarkCallback() {
             @Override

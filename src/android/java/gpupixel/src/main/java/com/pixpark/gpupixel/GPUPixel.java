@@ -24,6 +24,11 @@ public class GPUPixel {
     public interface GPUPixelLandmarkCallback {
         public void onFaceLandmark(float[] landmarks);
     }
+
+    public interface RawOutputCallback {
+        public void onRawOutput(byte[] data, int width, int height, int ts);
+    }
+
     public static final int NoRotation = 0;
     public static final int RotateLeft = 1;
     public static final int RotateRight = 2;
@@ -227,7 +232,7 @@ public class GPUPixel {
     public static native void nativeSourceCameraDestroy(final long classID);
     public static native void nativeSourceCameraFinalize(final long classID);
     public static native void nativeSourceCameraSetFrame(final long classID, final int width, final int height, final int[] data, final int rotation);
-
+    public static native void nativeSourceCameraSetFrameByBuffer(final long classId,  final int width, final int height, final ByteBuffer buffer, final int rotation);
     // SourceRawDataInput
     public static native long nativeSourceRawInputNew();
     public static native void nativeSourceRawInputUploadBytes(final long classID, final int[] pixel, final int width, final int height, final int stride);
@@ -238,7 +243,7 @@ public class GPUPixel {
     // Source
     public static native long nativeSourceAddFilter(final long targetClassId);
     public static native long nativeSourceAddTarget(final long classID, final long targetClassID, final int texID, final boolean isFilter);
-    public static native long nativeSourceAddTargetOutputCallback(final long classId);
+    public static native long nativeSourceAddTargetOutputCallback(final long classId, final RawOutputCallback callback);
     public static native void nativeSourceRemoveTarget(final long classID, final long targetClassID, final boolean isFilter);
     public static native void nativeSourceRemoveAllTargets(final long classID);
     public static native boolean nativeSourceProceed(final long classID, final boolean bUpdateTargets);

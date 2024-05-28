@@ -24,11 +24,11 @@ public abstract class GPUPixelSource {
         return addTarget(target, -1);
     }
 
-    public void addTargetCallback() {
+    public void addTargetCallback(final GPUPixel.RawOutputCallback callback) {
         GPUPixel.getInstance().runOnDraw(new Runnable() {
             @Override
             public void run() {
-                GPUPixel.nativeSourceAddTargetOutputCallback(mNativeClassID);
+                GPUPixel.nativeSourceAddTargetOutputCallback(mNativeClassID, callback);
             }
         });
     }

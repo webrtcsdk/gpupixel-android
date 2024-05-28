@@ -18,6 +18,7 @@ import android.view.Surface;
 import android.view.SurfaceHolder;
 import android.view.WindowManager;
 import java.io.IOException;
+import java.nio.ByteBuffer;
 import java.nio.IntBuffer;
 
 public class GPUPixelSourceCamera extends GPUPixelSource implements Camera.PreviewCallback {
@@ -67,6 +68,17 @@ public class GPUPixelSourceCamera extends GPUPixelSource implements Camera.Previ
             @Override
             public void run() {
                 GPUPixel.nativeSourceCameraSetFrame(mNativeClassID, width, height, data, GPUPixel.NoRotation);
+            }
+        });
+
+        proceed(true, true);
+    }
+
+    public void setFrameByBuffer(final ByteBuffer buffer, final int width, final int height) {
+        GPUPixel.getInstance().runOnDraw(new Runnable() {
+            @Override
+            public void run() {
+                GPUPixel.nativeSourceCameraSetFrameByBuffer(mNativeClassID, width, height, buffer, GPUPixel.NoRotation);
             }
         });
 

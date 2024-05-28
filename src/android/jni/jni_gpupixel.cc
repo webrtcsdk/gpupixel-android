@@ -91,6 +91,24 @@ extern "C" void Java_com_pixpark_gpupixel_GPUPixel_nativeSourceCameraSetFrame(
     env->ReleaseIntArrayElements(jdata, data, 0);
 };
 
+extern "C" void Java_com_pixpark_gpupixel_GPUPixel_nativeSourceCameraSetFrameByBuffer(
+        JNIEnv* env,
+        jclass,
+        jlong classId,
+        jint width,
+        jint height,
+        jobject buffer,
+        jint rotation) {
+    // Get the pointer to the ByteBuffer data
+    void* pixels = env->GetDirectBufferAddress(buffer);
+    if (pixels == nullptr) {
+        // Handle error: Direct buffer address could not be obtained
+        return;
+    }
+    ((SourceCamera*)classId)
+            ->setFrameData(width, height, pixels, (RotationMode)rotation);
+};
+
 extern "C" jlong Java_com_pixpark_gpupixel_GPUPixel_nativeSourceRawInputNew(
     JNIEnv* env,
     jclass) {
@@ -189,22 +207,44 @@ extern "C" jlong Java_com_pixpark_gpupixel_GPUPixel_nativeSourceAddTarget(
 extern "C" jlong Java_com_pixpark_gpupixel_GPUPixel_nativeSourceAddTargetOutputCallback(
         JNIEnv* env,
         jclass,
-        jlong classId) {
+        jlong classId,
+        jobject src) {
+
+    jobject globalSourceRef = env->NewGlobalRef(src);
+
+    jclass cls = env->GetObjectClass(globalSourceRef);
+    jmethodID mid = env->GetMethodID(cls, "onRawOutput", "([BIII)V");
+
+    if (!mid) return 0;
+
     Source* source = (Source*)classId;
-//  std::shared_ptr<Target> target =
-//      isFilter ? std::shared_ptr<Target>((Filter*)targetClassId)
-//               : std::shared_ptr<Target>((Target*)targetClassId);
+
     std::shared_ptr<Target> target;
 
     std::shared_ptr<TargetRawDataOutput> output = TargetRawDataOutput::create();
-    output->setPixelsCallbck([&](const uint8_t* data, int width, int height, int64_t ts) {
-        for (int i = 0; i < width * height; ++i) {
-            int a = data[i * 4 + 3];  // Alpha
-            int r = data[i * 4 + 0];  // Red
-            int g = data[i * 4 + 1];  // Green
-            int b = data[i * 4 + 2];  // Blue
-            __android_log_print(ANDROID_LOG_INFO, "OpenGL", "value: %d %d %d %d", a, r, g, b);
-        }
+
+    JavaVM* jvm;
+    env->GetJavaVM(&jvm);
+
+    output->setPixelsCallbck([=](const uint8_t* data, int width, int height, int64_t ts) {
+        size_t frame_size = width * height * 4;
+
+        JNIEnv* myNewEnv;
+        JavaVMAttachArgs args;
+        args.version = JNI_VERSION_1_6; // choose your JNI version
+        args.name = NULL; // you might want to give the java thread a name
+        args.group = NULL; // you might want to assign the java thread to a ThreadGroup
+        jvm->AttachCurrentThread(reinterpret_cast<JNIEnv **>((void **) &myNewEnv), &args);
+
+        jbyte* by = (jbyte*)data;
+
+        jbyteArray yArray = myNewEnv->NewByteArray(frame_size);
+
+        myNewEnv->SetByteArrayRegion(yArray, 0, frame_size, by);
+
+        myNewEnv->CallVoidMethod(globalSourceRef, mid, yArray, width, height, ts);
+
+        myNewEnv->DeleteLocalRef(yArray);
     });
     target = output;
 
