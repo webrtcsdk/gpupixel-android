@@ -17,6 +17,7 @@ import android.util.Log;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.InputStream;
+import java.nio.ByteBuffer;
 
 public class GPUPixel {
 
@@ -230,6 +231,8 @@ public class GPUPixel {
     // SourceRawDataInput
     public static native long nativeSourceRawInputNew();
     public static native void nativeSourceRawInputUploadBytes(final long classID, final int[] pixel, final int width, final int height, final int stride);
+
+    public static native void nativeWaterbusUploadBytes(final long classID, final ByteBuffer pixel, final int width, final int height, final int stride);
     public static native void nativeSourceRawInputSetRotation(final long classID, final int rotation);
 
     // Source

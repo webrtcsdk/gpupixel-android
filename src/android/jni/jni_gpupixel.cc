@@ -17,7 +17,6 @@
 
 USING_NS_GPUPIXEL
 std::list<std::shared_ptr<Filter>>  filter_list_;
-bool is_processing = false;
 //std::shared_ptr<SourceRawDataInput> source_raw_data_;
 
 extern "C" jlong Java_com_pixpark_gpupixel_GPUPixel_nativeSourceImageNew(
@@ -112,13 +111,29 @@ Java_com_pixpark_gpupixel_GPUPixel_nativeSourceRawInputUploadBytes(
     jint width,
     jint height,
     jint stride) {
-    if (is_processing) return;
-    is_processing = true;
-
   jint* pixel = env->GetIntArrayElements(jPixel, 0);
   ((SourceRawDataInput*)classId)->uploadBytes((uint8_t*)pixel, width, height, stride, 0);
   env->ReleaseIntArrayElements(jPixel, pixel, 0);
 };
+
+extern "C" void Java_com_pixpark_gpupixel_GPUPixel_nativeWaterbusUploadBytes(
+        JNIEnv* env,
+        jclass,
+        jlong classId,
+        jobject buffer,
+        jint width,
+        jint height,
+        jint stride
+) {
+    // Get the pointer to the ByteBuffer data
+    void* pixels = env->GetDirectBufferAddress(buffer);
+    if (pixels == nullptr) {
+        // Handle error: Direct buffer address could not be obtained
+        return;
+    }
+
+    ((SourceRawDataInput*)classId)->uploadBytes((uint8_t*) pixels, width, height, stride, 0);
+}
 
 extern "C" void
 Java_com_pixpark_gpupixel_GPUPixel_nativeSourceRawInputSetRotation(
@@ -190,8 +205,6 @@ extern "C" jlong Java_com_pixpark_gpupixel_GPUPixel_nativeSourceAddTargetOutputC
             int b = data[i * 4 + 2];  // Blue
             __android_log_print(ANDROID_LOG_INFO, "OpenGL", "value: %d %d %d %d", a, r, g, b);
         }
-
-        is_processing = false;
     });
     target = output;
 

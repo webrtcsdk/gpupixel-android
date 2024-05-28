@@ -7,12 +7,21 @@
 
 package com.pixpark.gpupixel;
 
+import android.annotation.TargetApi;
 import android.graphics.Bitmap;
+import android.graphics.SurfaceTexture;
+import android.opengl.GLES20;
+import android.os.Build;
+import android.util.Log;
+
+import java.io.IOException;
 import java.nio.ByteBuffer;
 
 public class GPUPixelSourceRawInput extends GPUPixelSource {
     private Object object_this;
     private GPUPixel.GPUPixelLandmarkCallback landmarkCallback;
+
+    private SurfaceTexture mSurfaceTexture = null;
     public GPUPixelSourceRawInput() {
         object_this = this;
 
@@ -41,6 +50,11 @@ public class GPUPixelSourceRawInput extends GPUPixelSource {
 
     public void uploadBytes(final int[] pixels, int width, int height, int stride) {
         GPUPixel.nativeSourceRawInputUploadBytes(mNativeClassID, pixels, width, height, stride);
+        proceed(true, false);
+    }
+
+    public void uploadByteBuffer(final ByteBuffer pixels, int width, int height, int stride) {
+        GPUPixel.nativeWaterbusUploadBytes(mNativeClassID, pixels, width, height, stride);
         proceed(true, false);
     }
 

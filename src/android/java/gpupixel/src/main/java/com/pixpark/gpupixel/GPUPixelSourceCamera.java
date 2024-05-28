@@ -62,6 +62,17 @@ public class GPUPixelSourceCamera extends GPUPixelSource implements Camera.Previ
         }
     }
 
+    public void setFrame(final int[] data, final int width, final int height) {
+        GPUPixel.getInstance().runOnDraw(new Runnable() {
+            @Override
+            public void run() {
+                GPUPixel.nativeSourceCameraSetFrame(mNativeClassID, width, height, data, GPUPixel.NoRotation);
+            }
+        });
+
+        proceed(true, true);
+    }
+
     @Override
     public void onPreviewFrame(final byte[] data, Camera camera) {
         final Camera.Size previewSize = camera.getParameters().getPreviewSize();
@@ -103,68 +114,68 @@ public class GPUPixelSourceCamera extends GPUPixelSource implements Camera.Previ
     }
 
     private void setUpCamera(final int id) {
-        mCamera = Camera.open(id);
-        Camera.Parameters parameters = mCamera.getParameters();
-        if (parameters.getSupportedFocusModes().contains(
-                Camera.Parameters.FOCUS_MODE_CONTINUOUS_PICTURE)) {
-            parameters.setFocusMode(Camera.Parameters.FOCUS_MODE_CONTINUOUS_PICTURE);
-        }
-        parameters.setPreviewSize(1280, 720);
-        parameters.setPreviewFormat(ImageFormat.NV21);
-        mCamera.setParameters(parameters);
-
-        int deviceRotation = ((WindowManager) mContext.getSystemService(Context.WINDOW_SERVICE)).getDefaultDisplay()
-                .getRotation();
-        android.hardware.Camera.CameraInfo info = new android.hardware.Camera.CameraInfo();
-        android.hardware.Camera.getCameraInfo(mCurrentCameraId, info);
-
-        int rotation = 0;
-        switch (deviceRotation) {
-            case Surface.ROTATION_0:
-                rotation = 0;
-                break;
-            case Surface.ROTATION_90:
-                rotation = 90;
-                break;
-            case Surface.ROTATION_180:
-                rotation = 180;
-                break;
-            case Surface.ROTATION_270:
-                rotation = 270;
-                break;
-        }
+//        mCamera = Camera.open(id);
+//        Camera.Parameters parameters = mCamera.getParameters();
+//        if (parameters.getSupportedFocusModes().contains(
+//                Camera.Parameters.FOCUS_MODE_CONTINUOUS_PICTURE)) {
+//            parameters.setFocusMode(Camera.Parameters.FOCUS_MODE_CONTINUOUS_PICTURE);
+//        }
+//        parameters.setPreviewSize(1280, 720);
+//        parameters.setPreviewFormat(ImageFormat.NV21);
+//        mCamera.setParameters(parameters);
+//
+//        int deviceRotation = ((WindowManager) mContext.getSystemService(Context.WINDOW_SERVICE)).getDefaultDisplay()
+//                .getRotation();
+//        android.hardware.Camera.CameraInfo info = new android.hardware.Camera.CameraInfo();
+//        android.hardware.Camera.getCameraInfo(mCurrentCameraId, info);
+//
+//        int rotation = 0;
+//        switch (deviceRotation) {
+//            case Surface.ROTATION_0:
+//                rotation = 0;
+//                break;
+//            case Surface.ROTATION_90:
+//                rotation = 90;
+//                break;
+//            case Surface.ROTATION_180:
+//                rotation = 180;
+//                break;
+//            case Surface.ROTATION_270:
+//                rotation = 270;
+//                break;
+//        }
 
         mRotation = GPUPixel.NoRotation;
-        if (info.facing == Camera.CameraInfo.CAMERA_FACING_FRONT) {
-            rotation = (info.orientation + rotation) % 360;
-            switch (rotation) {
-                case 0:
-                    mRotation = GPUPixel.FlipHorizontal;
-                    break;
-                case 90:
-                    mRotation = GPUPixel.RotateRightFlipVertical;
-                    break;
-                case 180:
-                    mRotation = GPUPixel.FlipVertical;
-                    break;
-                case 270:
-                    mRotation = GPUPixel.RotateRightFlipHorizontal;
-                    break;
-            }
-        } else {
-            rotation = (info.orientation - rotation + 360) % 360;
-            switch (rotation) {
-                case 90:
-                    mRotation = GPUPixel.RotateRight;
-                    break;
-                case 180:
-                    mRotation = GPUPixel.Rotate180;
-                    break;
-                case 270:
-                    mRotation = GPUPixel.RotateLeft;
-                    break;
-            }
-        }
+//        if (info.facing == Camera.CameraInfo.CAMERA_FACING_FRONT) {
+//            rotation = (info.orientation + rotation) % 360;
+//            switch (rotation) {
+//                case 0:
+//                    mRotation = GPUPixel.FlipHorizontal;
+//                    break;
+//                case 90:
+//                    mRotation = GPUPixel.RotateRightFlipVertical;
+//                    break;
+//                case 180:
+//                    mRotation = GPUPixel.FlipVertical;
+//                    break;
+//                case 270:
+//                    mRotation = GPUPixel.RotateRightFlipHorizontal;
+//                    break;
+//            }
+//        } else {
+//            rotation = (info.orientation - rotation + 360) % 360;
+//            switch (rotation) {
+//                case 90:
+//                    mRotation = GPUPixel.RotateRight;
+//                    break;
+//                case 180:
+//                    mRotation = GPUPixel.Rotate180;
+//                    break;
+//                case 270:
+//                    mRotation = GPUPixel.RotateLeft;
+//                    break;
+//            }
+//        }
 
         if (Build.VERSION.SDK_INT > Build.VERSION_CODES.GINGERBREAD_MR1) {
             GPUPixel.getInstance().runOnDraw(new Runnable() {
@@ -175,13 +186,13 @@ public class GPUPixelSourceCamera extends GPUPixelSource implements Camera.Previ
                         int[] textures = new int[1];
                         GLES20.glGenTextures(1, textures, 0);
                         mSurfaceTexture = new SurfaceTexture(textures[0]);
-                        try {
-                            mCamera.setPreviewTexture(mSurfaceTexture);
-                            mCamera.setPreviewCallback(GPUPixelSourceCamera.this);
-                            mCamera.startPreview();
-                        } catch (IOException e) {
-                            e.printStackTrace();
-                        }
+//                        try {
+//                            mCamera.setPreviewTexture(mSurfaceTexture);
+//                            mCamera.setPreviewCallback(GPUPixelSourceCamera.this);
+//                            mCamera.startPreview();
+//                        } catch (IOException e) {
+//                            e.printStackTrace();
+//                        }
                     }
                 }
             });
